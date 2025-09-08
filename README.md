@@ -5,6 +5,8 @@ For CS2300 "File Structures and Database Systems"
 
 ---
 
+Please reffer to [[BUILD]] for implementation.
+
 ## Introduction  
 The goal of this project is to design and implement a **Gym Management System** using relational modeling and SQL integration in a desktop application. Many gyms need a structured way to track members, staff, and workouts. Members may also want to view their own progress over time.  
 
