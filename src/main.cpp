@@ -1,9 +1,18 @@
+// For GLFW/Vulkan Rendering
 #include "renderer.h"
+// For MySql 
 #include <mysql/mysql.h>
 #include <mysql_driver.h>
 #include <mysql_connection.h>
 #include <cppconn/statement.h>
 #include <cppconn/resultset.h>
+// For frame rate limiter
+#include <chrono>
+#include <thread>
+
+// Frame Rate Data
+const int TARGET_FPS = 60;
+const int FRAME_TIME_MS = 1000 / TARGET_FPS; // Time per frame in milliseconds
 
 // Main code
 int main(int, char**)
@@ -88,6 +97,8 @@ int main(int, char**)
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+        auto frameStart = std::chrono::high_resolution_clock::now();
+
 
         // Resize swap chain?
         int fb_width, fb_height;
@@ -110,6 +121,7 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+// --------------------- Stuff Goes Here --------------------- //
 
         /*
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
@@ -139,6 +151,9 @@ int main(int, char**)
         }
 */
 
+
+// -------------------- Stuff Stops Here -------------------- //
+        
         // Rendering
         ImGui::Render();
         ImDrawData* draw_data = ImGui::GetDrawData();
@@ -151,6 +166,18 @@ int main(int, char**)
             wd->ClearValue.color.float32[3] = clear_color.w;
             FrameRender(wd, draw_data);
             FramePresent(wd);
+        }
+        
+        /* ----- Frame Rate Limiter ----- */
+        auto frameEnd = std::chrono::high_resolution_clock::now();
+        auto elapsedTime =
+            std::chrono::duration_cast<std::chrono::milliseconds>(frameEnd -
+                                                                  frameStart)
+                .count();
+
+        if (elapsedTime < FRAME_TIME_MS) {
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(FRAME_TIME_MS - elapsedTime));
         }
     }
 
