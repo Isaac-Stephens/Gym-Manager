@@ -17,7 +17,7 @@ echo "-----------------------------"
 sudo apt update
 
 # Define an array of required packages
-REQUIRED_PACKAGES=("mysql-server" "libmysqlclient-dev" "mysql-server" "libmysqlcppconn-dev" "libvulkan1" "mesa-vulkan-drivers" "vulkan-tools" "libglfw-dev")
+REQUIRED_PACKAGES=("mysql-server" "libmysqlclient-dev" "mysql-server" "libmysqlcppconn-dev" "libvulkan1" "mesa-vulkan-drivers" "vulkan-tools" "libglfw3-dev")
 
 # Loop through the packages and install them if not already installed
 echo "Checking and installing required packages..."
