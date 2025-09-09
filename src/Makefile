@@ -19,8 +19,8 @@ CXXFLAGS = 	-std=c++17 \
 			-I$(IMGUI_DIR) \
 			-I$(IMGUI_DIR)/imgui \
 			-I$(IMGUI_DIR)/imgui/backends \
-			-g -Wall -Wformat
-LIBS =
+			-g -Wall -Wformat 
+LIBS = -lmysqlclient -lmysqlcppconn
 
 ##---------------------------------------------------------------------
 ## BUILD FLAGS PER PLATFORM
