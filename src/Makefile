@@ -1,30 +1,25 @@
-#
-# Cross Platform Makefile
-# Compatible with MSYS2/MINGW, Ubuntu 14.04.1 and Mac OS X
-#
-# You will need GLFW (http://www.glfw.org):
-# Linux:
-#   apt-get install libglfw-dev
-# Mac OS X:
-#   brew install glfw
-# MSYS2:
-#   pacman -S --noconfirm --needed mingw-w64-x86_64-toolchain mingw-w64-x86_64-glfw
-#
-
-#CXX = g++
+CXX = g++
 #CXX = clang++
 
 EXE = gymman
 IMGUI_DIR = ..
-SOURCES = main.cpp
-SOURCES += $(IMGUI_DIR)/imgui/imgui.cpp $(IMGUI_DIR)/imgui/imgui_demo.cpp $(IMGUI_DIR)/imgui/imgui_draw.cpp $(IMGUI_DIR)/imgui/imgui_tables.cpp $(IMGUI_DIR)/imgui/imgui_widgets.cpp
-SOURCES += $(IMGUI_DIR)/imgui/backends/imgui_impl_glfw.cpp $(IMGUI_DIR)/imgui/backends/imgui_impl_vulkan.cpp
+SOURCES = $(wildcard *.cpp)
+SOURCES += 	$(IMGUI_DIR)/imgui/imgui.cpp  \
+			$(IMGUI_DIR)/imgui/imgui_demo.cpp \
+			$(IMGUI_DIR)/imgui/imgui_draw.cpp \
+			$(IMGUI_DIR)/imgui/imgui_tables.cpp \
+			$(IMGUI_DIR)/imgui/imgui_widgets.cpp \
+			$(IMGUI_DIR)/imgui/backends/imgui_impl_glfw.cpp \
+			$(IMGUI_DIR)/imgui/backends/imgui_impl_vulkan.cpp
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
 
-CXXFLAGS = -std=c++11 -I$(IMGUI_DIR) -I$(IMGUI_DIR)/imgui -I$(IMGUI_DIR)/imgui/backends
-CXXFLAGS += -g -Wall -Wformat
+CXXFLAGS = 	-std=c++17 \
+			-I$(IMGUI_DIR) \
+			-I$(IMGUI_DIR)/imgui \
+			-I$(IMGUI_DIR)/imgui/backends \
+			-g -Wall -Wformat
 LIBS =
 
 ##---------------------------------------------------------------------
