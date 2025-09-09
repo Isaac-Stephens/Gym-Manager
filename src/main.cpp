@@ -1,5 +1,9 @@
 #include "renderer.h"
-
+#include <mysql/mysql.h>
+#include <mysql_driver.h>
+#include <mysql_connection.h>
+#include <cppconn/statement.h>
+#include <cppconn/resultset.h>
 
 // Main code
 int main(int, char**)
