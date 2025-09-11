@@ -2,8 +2,8 @@
 ## Setup Steps
 ### Prerequisites
 
-Before starting, ensure you are running a **Debian-based Linux distribution** (e.g., Debian, Ubuntu).  
-You will also need `sudo` privileges to install packages and configure MySQL.  
+Before starting, ensure you are running a **Debian-based Linux distribution** (e.g., Debian, Ubuntu). ***Arch-based distributions*** *are also possible, though they might take more tinkering on your end. I hate myself and run Arch on my desktop so thats why it's sorta compattable.*
+
 
 ---
 
@@ -15,6 +15,11 @@ chmod +x gymman_install_DEBIAN.sh
 ```bash
 ./gymman_install_DEBIAN.sh
 ```
+-- OR --
+```bash
+./gymman_install_ARCH.sh
+```
+
 This script will:
 - Update the system package lists.
 - Install the required dependencies:
