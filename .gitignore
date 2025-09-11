@@ -1,4 +1,3 @@
-gymman_install_ARCH.sh
 *.o
 .vscode
 *.ini

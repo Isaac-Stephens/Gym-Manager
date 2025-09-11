@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script will install all the necessary dependencies
-# and build run the necessary build steps for DEBIAN based
+# and build run the necessary build steps for ARCH based
 # linux distributions.
 
 # $ chmod +x gymman_install_DEBIAN.sh
@@ -14,17 +14,37 @@ set -e
 echo "-----------------------------"
 echo "| Updating package lists... |"
 echo "-----------------------------"
-sudo apt update
+sudo pacman -Syu --noconfirm
 
 # Define an array of required packages
-REQUIRED_PACKAGES=("mysql-server" "libmysqlclient-dev" "mysql-server" "libmysqlcppconn-dev" "libvulkan1" "mesa-vulkan-drivers" "vulkan-tools" "libglfw3-dev")
-
+REQUIRED_PACKAGES_pacman=("vulkan-icd-loader" "mesa" "vulkan-tools" "glfw")
+REQUIRED_PACKAGES_aur=("mysql" "mysql-connector-c++")
 # Loop through the packages and install them if not already installed
 echo "Checking and installing required packages..."
-for package in "${REQUIRED_PACKAGES[@]}"; do
-    if ! dpkg -s "$package" &> /dev/null; then
+for package in "${REQUIRED_PACKAGES_pacman[@]}"; do
+    if ! pacman -Qi "$package" &> /dev/null; then
         echo "Installing $package..."
-        sudo apt install -y "$package"
+        sudo pacman -S  "$package" --noconfirm
+    else
+        echo "$package is already installed."
+    fi
+done
+
+if ! command -v yay &> /dev/null; then
+    echo "Yay not found. Installing yay..."
+    sudo pacman -S --needed git base-devel --noconfirm
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si --noconfirm
+    cd ..
+    rm -rf yay
+fi
+
+
+for package in "${REQUIRED_PACKAGES_aur[@]}"; do
+    if ! yay -Qi "$package" &> /dev/null; then
+        echo "Installing $package..."
+        sudo yay -S "$package" --noconfirm
     else
         echo "$package is already installed."
     fi
@@ -39,10 +59,9 @@ echo "-------------------------------------------"
 
 mysql --version
 
-sudo systemctl start mysql
-sudo systemctl enable mysql
-
-sudo systemctl status mysql
+sudo systemctl start mysqld
+sudo systemctl enable mysqld
+sudo systemctl status mysqld
 
 # Set a root password, remove anonymous users, disallow remote root login, remove test databases
 sudo mysql_secure_installation
