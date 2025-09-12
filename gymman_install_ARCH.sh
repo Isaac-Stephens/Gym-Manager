@@ -19,7 +19,15 @@ sudo pacman -Syu --noconfirm
 # Define an array of required packages
 REQUIRED_PACKAGES_pacman=("vulkan-icd-loader" "mesa" "vulkan-tools" "glfw")
 REQUIRED_PACKAGES_aur=("mysql" "mysql-connector-c++")
-# Loop through the packages and install them if not already installed
+
+# TODO: mysql-connector-c++ is having issues downloading
+# from mirror:
+## curl: (22) The requested URL returned error: 404
+## ==> ERROR: Failure while downloading https://mirrors.sohu.com/mysql/Connector-C++/mysql-connector-c++-1.1.9.tar.gz
+## curl: (22) The requested URL returned error: 404
+## ==> ERROR: Failure while downloading https://mirrors.sohu.com/mysql/Connector-C++/mysql-connector-c++-1.1.9.tar.gz
+## Loop through the packages and install them if not already installed
+
 echo "Checking and installing required packages..."
 for package in "${REQUIRED_PACKAGES_pacman[@]}"; do
     if ! pacman -Qi "$package" &> /dev/null; then
