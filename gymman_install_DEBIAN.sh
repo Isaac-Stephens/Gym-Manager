@@ -16,8 +16,24 @@ echo "| Updating package lists... |"
 echo "-----------------------------"
 sudo apt update
 
-# Define an array of required packages
-REQUIRED_PACKAGES=("mysql-server" "libmysqlclient-dev" "mysql-server" "libmysqlcppconn-dev" "libvulkan1" "mesa-vulkan-drivers" "vulkan-tools" "libglfw3-dev")
+# Base required packages
+REQUIRED_PACKAGES=("libmysqlcppconn-dev" "libvulkan1" "mesa-vulkan-drivers" "vulkan-tools" "libglfw3-dev")
+
+# Handle MySQL vs MariaDB
+MYSQL_CANDIDATE=$(apt-cache policy mysql-server | grep Candidate | awk '{print $2}')
+
+if [ "$MYSQL_CANDIDATE" != "(none)" ]; then
+    echo "MySQL server is available in repos."
+    SQL_PACKAGES=("mysql-server" "libmysqlclient-dev")
+    SQL_SERVICE="mysql"
+else
+    echo "Falling back to MariaDB server."
+    SQL_PACKAGES=("mariadb-server" "libmariadb-dev-compat")
+    SQL_SERVICE="mysql"   # MariaDB service is still called 'mysql'
+fi
+
+# Merge arrays
+REQUIRED_PACKAGES+=("${SQL_PACKAGES[@]}")
 
 # Loop through the packages and install them if not already installed
 echo "Checking and installing required packages..."
@@ -34,18 +50,23 @@ echo "| All required dependencies are installed! |"
 echo "--------------------------------------------"
 
 echo "-------------------------------------------"
-echo "| Verifying and starting MySQL service... |"
+echo "| Verifying and starting $SQL_SERVICE service... |"
 echo "-------------------------------------------"
 
-mysql --version
+mysql --version || true
 
-sudo systemctl start mysql
-sudo systemctl enable mysql
-
-sudo systemctl status mysql
+sudo systemctl start "$SQL_SERVICE"
+sudo systemctl enable "$SQL_SERVICE"
+sudo systemctl status "$SQL_SERVICE" --no-pager
 
 # Set a root password, remove anonymous users, disallow remote root login, remove test databases
-sudo mysql_secure_installation
+if sudo mysql_secure_installationif command -v mysql_secure_installation >/dev/null 2>&1; then
+    sudo mysql_secure_installation
+elif command -v mariadb-secure-installation >/dev/null 2>&1; then
+    sudo mariadb-secure-installation
+else
+    echo "No secure installation script found. You may need to secure MariaDB manually."
+fi
 
 # login to MySQL:
 # $ sudo mysql -u root -p
