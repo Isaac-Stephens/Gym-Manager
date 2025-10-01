@@ -1,0 +1,13 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<OSDM_Design class="oracle.dbtools.crest.model.design.Design" name="gymman" id="B7F768EC-D7AE-FFD6-11FF-375515C58985" version="3.5">
+<createdBy>isaac</createdBy>
+<createdTime>2025-10-01 14:10:28 UTC</createdTime>
+<ownerDesignName>gymman</ownerDesignName>
+<capitalNames>false</capitalNames>
+<designId>B7F768EC-D7AE-FFD6-11FF-375515C58985</designId>
+<usedDesignStorageDescriptors>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="3EB528F7-9E33-3B03-4A53-9BCADDE6C157">
+<designStoragePath>/create_gymman_tables</designStoragePath>
+</designDescr>
+</usedDesignStorageDescriptors>
+</OSDM_Design>

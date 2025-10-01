@@ -3,5 +3,8 @@
 *.ini
 gymman
 #*.xopp
-aac@debian>
-authors.txt
+*.log
+**/*.localz
+**/*.local
+**/*.git
+**/*.DS_Store
