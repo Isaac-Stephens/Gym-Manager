@@ -8,3 +8,5 @@ gymman
 **/*.local
 **/*.git
 **/*.DS_Store
+*.dmd
+*.mwb

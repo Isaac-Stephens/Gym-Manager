@@ -4,7 +4,7 @@ CREATE TABLE Members (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     birth_date DATE,
-    membership_start_date DATE DEFAULT CURRENT_DATE,
+    membership_start_date DATE,
     email VARCHAR(100) UNIQUE,
     sex VARCHAR(10) -- 'Male', 'Female'
 );
@@ -16,7 +16,6 @@ CREATE TABLE PhoneNumbers (
     phone_number_type VARCHAR(20), -- e.g., 'Home', 'Work', 'Mobile'
     CONSTRAINT fk_phone_member FOREIGN KEY (member_id) REFERENCES Members(member_id) -- Only allow phone numbers if member ID already exists
 );
-
 
 -- MEMBER (1) [has] (N) EMERGENCY_CONTACT
 CREATE TABLE EmergencyContacts (
@@ -37,7 +36,7 @@ CREATE TABLE Payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     member_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    payment_date DATE DEFAULT CURRENT_DATE,
+    payment_date DATE,
 
     FOREIGN KEY (member_id) REFERENCES Members(member_id) 
 );
@@ -48,7 +47,7 @@ CREATE TABLE Staff (
     ssn VARCHAR(50) UNIQUE, -- XXX-XX-XXXX
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    employment_date DATE DEFAULT CURRENT_DATE,
+    employment_date DATE,
     birth_date DATE,
     staff_address VARCHAR(255)
 );
@@ -76,7 +75,7 @@ CREATE TABLE TrainerClients (
     trainer_client_id INT AUTO_INCREMENT PRIMARY KEY,
     trainer_id INT NOT NULL,
     member_id INT NOT NULL,
-    client_start_date DATE DEFAULT CURRENT_DATE,
+    client_start_date DATE,
     client_end_date DATE, -- NULL = onging contract
     notes TEXT,
 
@@ -107,21 +106,23 @@ CREATE TABLE Managers (
 -- STAFF PAY TYPES
 CREATE TABLE Contractors (
     staff_id INT PRIMARY KEY,
-    
+    contract_type VARCHAR(100),
+    contract_details TEXT,
+
     CONSTRAINT fk_contractor_staff FOREIGN KEY (staff_id) REFERENCES Staff(staff_id)
         ON DELETE CASCADE
 );
 
 CREATE TABLE Hourly_Employees (
     staff_id INT PRIMARY KEY,
-    
+    hourly_rate INT,
     CONSTRAINT fk_hourly_staff FOREIGN KEY (staff_id) REFERENCES Staff(staff_id)
         ON DELETE CASCADE
 );
 
 CREATE TABLE Salary_Employees (
     staff_id INT PRIMARY KEY,
-    
+    anual_salary INT,
     CONSTRAINT fk_salary_staff FOREIGN KEY (staff_id) REFERENCES Staff(staff_id)
         ON DELETE CASCADE
 );
