@@ -9,5 +9,8 @@
 <designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="3EB528F7-9E33-3B03-4A53-9BCADDE6C157">
 <designStoragePath>/create_gymman_tables</designStoragePath>
 </designDescr>
+<designDescr class="oracle.dbtools.crest.model.design.Design$DesignStorageDesc" id="688CE358-7D79-3DAB-DFE9-7BEBB8B9397C">
+<designStoragePath>/create_gymman_tables</designStoragePath>
+</designDescr>
 </usedDesignStorageDescriptors>
 </OSDM_Design>
