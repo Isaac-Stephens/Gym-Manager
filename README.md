@@ -40,14 +40,6 @@ This project will focus on creating a **relational database** and a single appli
 - **Application Interface** that connects to and manages the database. *(Planned implementation in C++ using Dear ImGui and Vulkan, subject to change based on feasibility).*  
 - **Sample Dataset** for testing CRUD operations and queries.  
 - **Documentation** explaining design decisions, schema, and how to use the system.  
-
 ---
-
-## Timeline  
-
-- **Week 1–2**: Requirements analysis, ER diagram, and schema design.  
-- **Week 3–4**: SQL schema implementation and sample dataset creation.  
-- **Week 5–6**: Develop the application interface with CRUD functionality.  
-- **Week 7–8**: Implement and test basic queries (expiring memberships, workout history, active/inactive members).  
-- **Week 9**: Work on stretch goals (reports, equipment tracking, leaderboards) if time allows.  
-- **Week 10**: Final integration, documentation, and project presentation.  
+# Diagrams
+![](documentation/GymMan_Relational_OracleDataMod.png)
