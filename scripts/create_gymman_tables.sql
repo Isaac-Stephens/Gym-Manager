@@ -127,6 +127,57 @@ CREATE TABLE Salary_Employees (
         ON DELETE CASCADE
 );
 
--- TODO: Exercise Logs
+--------------------------------- Exercise Logs -------------------------------
+CREATE TABLE Exercises (
+    member_id INT PRIMARY KEY,
+    exercise_id INT AUTO_INCREMENT UNIQUE,
+    -- name given by member id
+    rpe INT,
+    exercise_date DATE,
+    CONSTRAINT fk_exercise_member FOREIGN KEY (member_id) REFERENCES Members(member_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Strength_Exercises (
+    exercise_id INT PRIMARY KEY,
+    exercise_weight INT,
+    weight_unit VARCHAR(10), -- pounds/kilograms?
+    num_sets INT,
+    num_repetitions INT,
+    notes TEXT,
+
+    CONSTRAINT fk_strength_exercise FOREIGN KEY (exercise_id) REFERENCES Exercises(exercise_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Cardio_Exercises (
+    exercise_id INT PRIMARY KEY,
+    cardio_id INT AUTO_INCREMENT,
+    avg_hr INT,
+    time_taken TIME NOT NULL,
+
+    CONSTRAINT fk_cardio_exercise FOREIGN KEY (exercise_id) REFERENCES Exercises(exercise_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Runs (
+    cardio_id INT PRIMARY KEY,
+    distance_unit VARCHAR(20) NOT NULL, -- meters? yards? kilometers? miles?
+    distance INT NOT NULL,
+    laps INT,
+
+    CONSTRAINT fk_run_cardio FOREIGN KEY (cardio_id) REFERENCES Cardio_Exercises(cardio_id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE Bike_Rides (
+    cardio_id INT PRIMARY KEY,
+    distance_unit VARCHAR(20) NOT NULL,
+    distance INT NOT NULL,
+    wattage INT,
+
+    CONSTRAINT fk_bike_cardio FOREIGN KEY (cardio_id) REFERENCES Cardio_Exercises (cardio_id)
+        ON DELETE CASCADE
+);
 
 -- TODO: Machinery Tracking

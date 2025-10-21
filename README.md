@@ -42,4 +42,7 @@ This project will focus on creating a **relational database** and a single appli
 - **Documentation** explaining design decisions, schema, and how to use the system.  
 ---
 # Diagrams
+***Oracle DataMod:***
 ![](documentation/GymMan_Relational_OracleDataMod.png)
+***MySQL Workbench:***
+![](documentation/GymMan_Relational_MySQLworkbench.png)
