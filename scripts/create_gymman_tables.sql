@@ -129,9 +129,9 @@ CREATE TABLE Salary_Employees (
 
 --------------------------------- Exercise Logs -------------------------------
 CREATE TABLE Exercises (
-    member_id INT PRIMARY KEY,
-    exercise_id INT AUTO_INCREMENT UNIQUE,
-    -- name given by member id
+    member_id INT NOT NULL,
+    exercise_id INT AUTO_INCREMENT PRIMARY KEY,
+    exercise_name VARCHAR(100) NOT NULL,
     rpe INT,
     exercise_date DATE,
     CONSTRAINT fk_exercise_member FOREIGN KEY (member_id) REFERENCES Members(member_id)
@@ -139,7 +139,8 @@ CREATE TABLE Exercises (
 );
 
 CREATE TABLE Strength_Exercises (
-    exercise_id INT PRIMARY KEY,
+    exercise_id INT UNIQUE,
+    strength_id INT AUTO_INCREMENT PRIMARY KEY,
     exercise_weight INT,
     weight_unit VARCHAR(10), -- pounds/kilograms?
     num_sets INT,
@@ -151,8 +152,8 @@ CREATE TABLE Strength_Exercises (
 );
 
 CREATE TABLE Cardio_Exercises (
-    exercise_id INT PRIMARY KEY,
-    cardio_id INT AUTO_INCREMENT,
+    exercise_id INT UNIQUE,
+    cardio_id INT AUTO_INCREMENT PRIMARY KEY,
     avg_hr INT,
     time_taken TIME NOT NULL,
 

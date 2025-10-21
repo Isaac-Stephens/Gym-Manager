@@ -10,3 +10,6 @@ gymman
 **/*.DS_Store
 *.dmd
 *.mwb
+
+scripts/update_db.sh
+
