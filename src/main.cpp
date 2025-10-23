@@ -1,11 +1,8 @@
+#include <iostream>
 // For GLFW/Vulkan Rendering
 #include "renderer.h"
 // For MySql 
-#include <mysql/mysql.h>
-#include <mysql_driver.h>
-#include <mysql_connection.h>
-#include <cppconn/statement.h>
-#include <cppconn/resultset.h>
+#include "sql.h"
 // For frame rate limiter
 #include <chrono>
 #include <thread>
@@ -17,6 +14,8 @@ const int FRAME_TIME_MS = 1000 / TARGET_FPS; // Time per frame in milliseconds
 // Main code
 int main(int, char**)
 {
+    connectToDatabase("gymman", "root", "root");
+
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;
