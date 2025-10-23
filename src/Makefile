@@ -10,7 +10,7 @@ SOURCES += 	$(IMGUI_DIR)/imgui/imgui.cpp  \
 			$(IMGUI_DIR)/imgui/imgui_tables.cpp \
 			$(IMGUI_DIR)/imgui/imgui_widgets.cpp \
 			$(IMGUI_DIR)/imgui/backends/imgui_impl_glfw.cpp \
-			$(IMGUI_DIR)/imgui/backends/imgui_impl_vulkan.cpp
+			$(IMGUI_DIR)/imgui/backends/imgui_impl_vulkan.cpp \
 OBJS = $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 UNAME_S := $(shell uname -s)
 LINUX_GL_LIBS = -lGL
