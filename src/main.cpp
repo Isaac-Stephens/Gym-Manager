@@ -1,8 +1,8 @@
 #include <iostream>
 // For GLFW/Vulkan Rendering
-#include "renderer.h"
+#include "render/renderer.h"
 // For MySql 
-#include "sql.h"
+#include "ui/sql.h"
 // For frame rate limiter
 #include <chrono>
 #include <thread>
@@ -79,7 +79,7 @@ int main(int, char**)
     ImGui_ImplVulkan_Init(&init_info);
 
     // Load Fonts
-    io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-Regular.ttf");
+    io.Fonts->AddFontFromFileTTF("imgui/fonts/Hack-Regular.ttf");
     // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-Bold.ttf");
     // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-BoldItalic.ttf");
     // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-Italic.ttf");
