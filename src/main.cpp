@@ -14,7 +14,7 @@ const int FRAME_TIME_MS = 1000 / TARGET_FPS; // Time per frame in milliseconds
 // Main code
 int main(int, char**)
 {
-    connectToDatabase("gymman", "root", "root");
+    std::unique_ptr<sql::Connection> conn = connectToDatabase("gymman", "root", "root");
 
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
