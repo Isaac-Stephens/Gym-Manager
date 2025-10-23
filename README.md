@@ -1,5 +1,7 @@
 # **Gym Management System**  
-Isaac Stephens [Junior, Computer Science, CS Department, Missouri S&T, issq3r@mst.edu]  
+Isaac Stephens 
+
+Junior, Computer Science, CS Department, Missouri S&T, issq3r@mst.edu 
 
 For CS2300 "File Structures and Database Systems"
 
