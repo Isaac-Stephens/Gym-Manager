@@ -1,6 +1,6 @@
 /*  
     =================================================
-    Functions for implementation of SQL with main.cpp
+    Functions for implementation of SQL with ui
     =================================================
 */
 
@@ -14,7 +14,9 @@
 #include <cppconn/statement.h> // For creating and executing SQL statements
 #include <memory>
 
-std::unique_ptr<sql::Connection> connectToDatabase(char* db_name, char* user, char* pass);
+sql::Connection* connectToDatabase(std::string db_name, std::string user, std::string pass);
+
+std::vector<std::tuple<std::string, std::string, double, std::string, int, int, int, std::string, std::string>> fetchAllStrengthExercises(sql::Connection* conn);
 
 
 
