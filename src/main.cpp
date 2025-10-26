@@ -1,8 +1,8 @@
 #include <iostream>
 // For GLFW/Vulkan Rendering
 #include "render/renderer.h"
-// For MySql 
-#include "ui/sql.h"
+// For MySql
+#include "ui/tables.h" // includes sql.h, no need to include
 // For frame rate limiter
 #include <chrono>
 #include <thread>
@@ -11,10 +11,9 @@
 const int TARGET_FPS = 60;
 const int FRAME_TIME_MS = 1000 / TARGET_FPS; // Time per frame in milliseconds
 
-// Main code
 int main(int, char**)
 {
-    std::unique_ptr<sql::Connection> conn = connectToDatabase("gymman", "root", "root");
+    sql::Connection* conn = connectToDatabase("gymman", "root", "root");
 
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
@@ -80,9 +79,9 @@ int main(int, char**)
 
     // Load Fonts
     io.Fonts->AddFontFromFileTTF("imgui/fonts/Hack-Regular.ttf");
-    // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-Bold.ttf");
-    // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-BoldItalic.ttf");
-    // io.Fonts->AddFontFromFileTTF("../imgui/fonts/Hack-Italic.ttf");
+    // io.Fonts->AddFontFromFileTTF("imgui/fonts/Hack-Bold.ttf");
+    // io.Fonts->AddFontFromFileTTF("imgui/fonts/Hack-BoldItalic.ttf");
+    // io.Fonts->AddFontFromFileTTF("imgui/fonts/Hack-Italic.ttf");
     
 
     // Our state
@@ -122,34 +121,7 @@ int main(int, char**)
 
 // --------------------- Stuff Goes Here --------------------- //
 
-        /*
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
-        */
-
+        ShowAllStrenghtExercisesTable(conn);
 
 // -------------------- Stuff Stops Here -------------------- //
         
