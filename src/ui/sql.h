@@ -5,7 +5,6 @@
 */
 
 #pragma once
-
 #include <mysql_driver.h> // For the MySQL driver instance
 #include <mysql_connection.h> // For the Connection object
 #include <cppconn/driver.h> // Generic driver interface
