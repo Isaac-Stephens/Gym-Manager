@@ -1,9 +1,8 @@
 # === Compiler and Flags ===
 CXX := g++
 CXXFLAGS := -std=c++17 -g -Wall -Wformat
-CXXFLAGS += -Isrc -Isrc/render -Isrc/ui -Iimgui -Iimgui/backends
-CXXFLAGS += `pkg-config --cflags glfw3 vulkan`
-LDFLAGS := -lGL -lmysqlclient -lmysqlcppconn `pkg-config --static --libs glfw3 vulkan`
+CXXFLAGS += -Isrc -Isrc/ui `wx-config --cxxflags`
+LDFLAGS := `wx-config --libs` -lGL -lmysqlcppconn
 
 # === Directories ===
 SRC_DIR := src
@@ -13,10 +12,7 @@ BIN := gymman
 # === Source Files ===
 SRC_FILES := \
     $(SRC_DIR)/main.cpp \
-    $(wildcard $(SRC_DIR)/render/*.cpp) \
-    $(wildcard $(SRC_DIR)/ui/*.cpp) \
-    $(wildcard imgui/*.cpp) \
-    $(wildcard imgui/backends/*.cpp)
+    $(wildcard $(SRC_DIR)/ui/*.cpp)
 
 # === Object Files ===
 OBJ_FILES := $(patsubst %.cpp,$(TARGET_DIR)/%.o,$(SRC_FILES))
