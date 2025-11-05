@@ -15,7 +15,7 @@ CREATE TABLE users (
   role_name VARCHAR(50),
   first_name VARCHAR(255),
   last_name VARCHAR(255),
-  email VARCHAR(255)
+  email VARCHAR(255),
   FOREIGN KEY role_name REFERENCES roles(role_name)
 );
 
