@@ -16,7 +16,7 @@ CREATE TABLE users (
   first_name VARCHAR(255),
   last_name VARCHAR(255),
   email VARCHAR(255),
-  FOREIGN KEY role_name REFERENCES roles(role_name)
+  FOREIGN KEY (role_name) REFERENCES roles(role_name)
 );
 
 -- Passwords should be bcrypt-hashed; for demo:
