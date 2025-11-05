@@ -5,6 +5,9 @@ CREATE TABLE roles (
   role_name VARCHAR(50) UNIQUE
 );
 
+-- Demo users
+INSERT INTO roles (role_name) VALUES ('Owner'), ('Staff'), ('Member'), ('Trainer');
+
 CREATE TABLE users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
@@ -13,11 +16,8 @@ CREATE TABLE users (
   first_name VARCHAR(255),
   last_name VARCHAR(255),
   email VARCHAR(255)
-  FOREIGN KEY (role_name) REFERENCES roles(role_name)
+  FOREIGN KEY role_name REFERENCES roles(role_name)
 );
-
--- Demo users
-INSERT INTO roles (role_name) VALUES ('Owner'), ('Staff'), ('Member'), ('Trainer');
 
 -- Passwords should be bcrypt-hashed; for demo:
 INSERT INTO users (username, password_hash, role_name, first_name, last_name)
