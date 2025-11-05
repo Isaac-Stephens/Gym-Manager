@@ -1,3 +1,32 @@
+------------------------- DEMO USERS (DELETE FOR ACTUAL IMPLEMENTATION) -------------------------
+
+CREATE TABLE roles (
+  role_id INT AUTO_INCREMENT PRIMARY KEY,
+  role_name VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role_name VARCHAR(50),
+  first_name VARCHAR(255),
+  last_name VARCHAR(255),
+  email VARCHAR(255)
+  FOREIGN KEY (role_name) REFERENCES roles(role_name)
+);
+
+-- Demo users
+INSERT INTO roles (role_name) VALUES ('Owner'), ('Staff'), ('Member'), ('Trainer');
+
+-- Passwords should be bcrypt-hashed; for demo:
+INSERT INTO users (username, password_hash, role_name, first_name, last_name)
+VALUES
+('demo_owner',  'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41', 'Owner', 'Demo', 'Owner'),
+('demo_staff',  'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41', 'Staff', 'Demo', 'Staff'),
+('demo_member', 'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41', 'Member', 'Demo', 'Member'),
+('demo_trainer','scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41', 'Trainer', 'Demo', 'Trainer');
+
 -------------------------------- MEMBERS --------------------------------
 CREATE TABLE Members (
     member_id int AUTO_INCREMENT PRIMARY KEY,
