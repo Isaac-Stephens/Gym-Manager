@@ -66,6 +66,7 @@ CREATE TABLE Payments (
     member_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_date DATE,
+    status VARCHAR(50),
 
     FOREIGN KEY (member_id) REFERENCES Members(member_id) 
 );
