@@ -71,6 +71,15 @@ CREATE TABLE Payments (
     FOREIGN KEY (member_id) REFERENCES Members(member_id) 
 );
 
+CREATE TABLE Checkins (
+    checkin_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    member_id INT NOT NULL,
+    checkin_time TIME,
+    checkin_date DATE,
+
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
 --------------------------------  STAFF  --------------------------------
 CREATE TABLE Staff (
     staff_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -86,6 +95,7 @@ CREATE TABLE Staff (
 CREATE TABLE Trainers (
     staff_id INT PRIMARY KEY,
     speciality VARCHAR(255),
+    active BOOLEAN,
     
     CONSTRAINT fk_trainer_staff FOREIGN KEY (staff_id) REFERENCES Staff(staff_id)
         ON DELETE CASCADE
