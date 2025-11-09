@@ -74,8 +74,7 @@ CREATE TABLE Payments (
 CREATE TABLE Checkins (
     checkin_id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     member_id INT NOT NULL,
-    checkin_time TIME,
-    checkin_date DATE,
+    checkin_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (member_id) REFERENCES Members(member_id)
 );
