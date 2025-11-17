@@ -2505,7 +2505,7 @@ INSERT INTO Strength_Exercises VALUES (@s29, NULL, 25, 'lbs', 3, 12, 'Rear delt 
 
 INSERT INTO Exercises VALUES (22, NULL, 'Weighted Step-ups', 7, '2024-10-09');
 SET @s30 = LAST_INSERT_ID();
-INSERT INTO Strength_Exercises VALUES (@s30, NULL, 55, 'lbs', 3, 10, 'Step-up stability')
+INSERT INTO Strength_Exercises VALUES (@s30, NULL, 55, 'lbs', 3, 10, 'Step-up stability');
 
 INSERT INTO Exercises (member_id, exercise_name, rpe, exercise_date)
 VALUES (12, 'Outdoor Run', 7, '2024-09-01');
