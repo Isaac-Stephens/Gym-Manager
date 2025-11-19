@@ -85,10 +85,10 @@ A full ER and logical schema is included in `documentation/`:
 
 ---
 
-## Technology Stack
+## Tech Stack
 
-| Layer | Technologies |
-|-------|--------------|
+| Layer | Tech |
+|-------|------|
 | **Frontend** | HTML, CSS, Jinja2 templates |
 | **Backend** | Flask (Python 3.13) |
 | **Database** | MariaDB |
