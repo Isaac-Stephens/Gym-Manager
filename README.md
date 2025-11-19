@@ -1,4 +1,4 @@
-# GymMan — Gym Management System (Flask Web Application)
+# GymMan - Gym Management System (Flask Web Application)
 **Author:** Isaac Stephens  
 **Course:** CS 2300 — File Structures and Database Systems  
 **Institution:** Missouri S&T  
