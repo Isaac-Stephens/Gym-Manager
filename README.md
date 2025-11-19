@@ -1,47 +1,98 @@
-# **Gym Management System**  
-Isaac Stephens 
-
-Junior, Computer Science, CS Department, Missouri S&T, issq3r@mst.edu 
-
-For CS2300 "File Structures and Database Systems"
-
----
-
-Please reffer to **BUILD.md** for implementation.
-
-## Introduction  
-The goal of this project is to design and implement a **Gym Management System** using relational modeling and SQL integration in a desktop application. Many gyms need a structured way to track members, staff, and workouts. Members may also want to view their own progress over time.  
-
-This project will focus on creating a **relational database** and a single application interface. The core implementation will support Create, Read, Update, and Delete (CRUD) operations and relational queries, while optional features (stretch goals) will showcase advanced functionality if time allows (or even as a continuation past the end of this class).  
+# GymMan — Gym Management System (Flask Web Application)
+**Author:** Isaac Stephens  
+**Course:** CS 2300 — File Structures and Database Systems  
+**Institution:** Missouri S&T  
+**Contact:** issq3r@mst.edu  
 
 ---
 
-## Functional Requirements  
+## Overview
 
-### Core Administrator/Member Functions  
-- **Member Management**: Add, update, and remove member records (name, contact information, emergency contact information, membership details).  
-- **Staff Management**: Record staff information (name, role, schedule).  
-- **Membership Tracking**: View membership type, start and expiration dates, and payment status.  
-- **Workout Records**: Allow members (or just admins in the core) to log exercises, values (e.g. weight lifted, distance run), and dates.  
+GymMan is a full-stack **web-based Gym Management System** built using **Flask**, **MariaDB**, and standard web technologies.  
+The project began as a planned desktop ImGui/Vulkan application but fully pivoted to a **web interface** to better support the scale and complexity of the database system.
 
-**Basic Queries:**  
-- List expiring memberships within the next 30 days.  
-- Retrieve workout history for a specific member.  
-- Identify active vs. inactive members.  
-
-### Stretch Functionality Goals  
-- **Reports**: Aggregate data such as “Most active members” or “Average attendance per month.”  
-- **Equipment Tracking**: Store records of gym equipment and maintenance schedules.  
-- **Leaderboards**: Rank members by personal records (e.g. heaviest lift, longest/fastest run).  
-- **Dual Interfaces**: Implement both a desktop administrator application and a member-facing web application.  
+This application provides a structured way for gym owners, staff, trainers, and members to manage essential gym operations, from member onboarding to trainer assignments to exercise tracking and financial reporting.
 
 ---
 
-## Deliverables  
-- **E-R Diagram** and SQL schema implementation.  
-- **Application Interface** that connects to and manages the database. *(Planned implementation in C++ using Dear ImGui and Vulkan, subject to change based on feasibility).*  
-- **Sample Dataset** for testing CRUD operations and queries.  
-- **Documentation** explaining design decisions, schema, and how to use the system.  
+## Current Status
+
+✔ Fully implemented Flask application  
+✔ Complete relational database schema with 20+ tables  
+`WIP` Role-based dashboards (Owner, Staff, Trainers, Member views)  
+`WIP` CRUD operations for all major entities  
+`WIP` Real exercise logging system (strength and cardio specialization models)  
+`WIP` Payment system with summaries and revenue queries  
+`WIP` Trainer–client relationship management  
+✔ Load-more pagination, dynamic flash messages, form validation, and error handling  
+✔ Deployed and tested locally and on server using Gunicorn + Nginx
+
 ---
-# Diagram
-![](documentation/GymMan_Relational_MySQLworkbench.png)
+
+
+## Core Features (Partially Implemented)
+
+### **Member Management**
+- Add, update, delete members  
+- Add/remove phone numbers and emergency contacts  
+- Track membership start dates, demographics, and contact info  
+- View exercise history and payment history
+
+### **Staff & Trainer Management**
+- Register staff with SSN, name, role, employment date  
+- Sub-type specific storage (trainer, contractor, hourly, salary, maintenance)  
+- Register trainer certifications  
+- Assign/unassign members to trainers  
+
+### **Exercise Logging**
+- Add strength or cardio exercise  
+- Strength: weight, unit, sets, reps, RPE, notes  
+- Cardio: avg heart rate, time, subtype  
+  - Run → distance, laps  
+  - Bike → distance, wattage  
+- Modify or delete exercises  
+- Full exercise history per member
+
+### **Payments**
+- Add new payments  
+- View payment summary for each member  
+- Compute total gym revenue  
+
+### **Queries & Reports**
+- Trainer client lists  
+- Total payments per member  
+- Maximum weight lifted  
+- Average distance per member (runs)  
+- Average RPE (per member or global)  
+- Drill-down exercise history  
+- Date-range filters  
+- Dashboard metrics and summaries  
+
+---
+
+## Database Architecture
+
+The database enforces:
+
+- **Referential integrity** with ON DELETE CASCADE behaviors  
+- **Super-type/sub-type modeling** for Staff and Exercises  
+- **Specialized cardio subtypes (Runs, Bike_Rides)**  
+- **Unique trainer–member pairings**  
+- **Check constraints** for units, RPE ranges, positive distances, etc.  
+
+A full ER and logical schema is included in `documentation/`:
+
+![GymMan ER Diagram](documentation/GymMan_Relational_MySQLworkbench.png)
+
+---
+
+## Technology Stack
+
+| Layer | Technologies |
+|-------|--------------|
+| **Frontend** | HTML, CSS, Jinja2 templates |
+| **Backend** | Flask (Python 3.13) |
+| **Database** | MariaDB |
+| **Auth** | Flask sessions, hashed passwords |
+| **Server Deployment** | Gunicorn, Nginx reverse proxy |
+| **Misc** | Cloudflare Tunnels, Linux (Debian) |
