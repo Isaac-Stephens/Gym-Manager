@@ -1,5 +1,5 @@
 -- ======================================================================= --
---                            GYMMAN DEMO SCHEMA                           --
+--                            GYMMAN: DEMO SCHEMA                          --
 --                          Author: Isaac Stephens                         --
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --
 --          Junior, Computer Science, CS Department, Missouri S&T          --
@@ -337,6 +337,44 @@ VALUES
     ('demo_trainer',
         'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41',
         4, 'Demo', 'Trainer', NULL);
+
+
+INSERT INTO Members (first_name, last_name, birth_date, membership_start_date, email, sex)
+VALUES ('Demo', 'Member', '2003-03-08', '2024-01-01', 'demo_member@gymman.com', 'Male');
+SET @member_id = LAST_INSERT_ID();
+
+INSERT INTO PhoneNumbers (member_id, phone_number, phone_number_type)
+VALUES (@member_id, '000-000-0000', 'Mobile');
+
+INSERT INTO EmergencyContacts (member_id, first_name, last_name, relationship, phone_number, email)
+VALUES (@member_id, 'Demo', 'Mom', 'Mother', '333-555-3454', 'demoMember_emergencyContact@gymman.com');
+
+INSERT INTO Payments (member_id, amount, payment_date, status, type)
+VALUES  
+    (@member_id, 50.00, '2024-01-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-02-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-03-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-04-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-05-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-06-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-07-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-08-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-09-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-10-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-11-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2024-12-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-01-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-02-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-03-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-04-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-05-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-06-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-07-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-08-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-09-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-10-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-11-01', 'Complete', 'Debit'),
+    (@member_id, 50.00, '2025-12-01', 'Complete', 'Debit');
 
 -- ============================================================
 -- INSERT INTO Members (and associated tables)
@@ -2601,3 +2639,5 @@ INSERT INTO Bike_Rides (cardio_id, distance_unit, distance, wattage)
 VALUES (@cardH, 'miles', 14, 250);
 
 COMMIT;
+
+---o-o- EOF

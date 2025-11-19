@@ -1,5 +1,5 @@
 -- ======================================================================= --
---                            GYMMAN DEMO SCHEMA                           --
+--                            GYMMAN: MAIN SCHEMA                          --
 --                          Author: Isaac Stephens                         --
 -- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ --
 --          Junior, Computer Science, CS Department, Missouri S&T          --
@@ -303,3 +303,5 @@ CREATE TABLE Bike_Rides (
 );
 
 COMMIT;
+
+---o-o- EOF
