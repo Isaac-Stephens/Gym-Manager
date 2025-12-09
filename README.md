@@ -1,4 +1,4 @@
-# GymMan - Gym Management System (Flask Web Application)
+# GymMan - The Gym Management System
 **Author:** Isaac Stephens  
 **Course:** CS 2300 — File Structures and Database Systems  
 **Institution:** Missouri S&T
@@ -12,62 +12,56 @@ The project began as a planned desktop ImGui/Vulkan application but fully pivote
 
 This application provides a structured way for gym owners, staff, trainers, and members to manage essential gym operations, from member onboarding to trainer assignments to exercise tracking and financial reporting.
 
----
+## Installation & Local Setup
+
+### See [BUILD.md](documentation/BUILD.md) for instructions.
+
+System Requirements:
+- Debian / Ubuntu-based Linux
+- Python 3.10+
+- MariaDB 10.6+
+- pip / python3-venv
 
 ## Current Status
 
-✔ Fully implemented Flask application  
-✔ Complete relational database schema with 20+ tables  
-`WIP` Role-based dashboards (Owner, Staff, Trainers, Member views)  
-`WIP` CRUD operations for all major entities  
-`WIP` Real exercise logging system (strength and cardio specialization models)  
-`WIP` Payment system with summaries and revenue queries  
-`WIP` Trainer–client relationship management  
-✔ Load-more pagination, dynamic flash messages, form validation, and error handling  
-✔ Deployed and tested locally and on server using Gunicorn + Nginx
+GymMan has matured into a fully functional multi-role management system with a complete authentication pipeline, role-based dashboards, membership management, trainer-assignment tools, exercise logging, and integrated payment tracking. Most core backend operations are implemented and verified through the live demo at `isaacstephens.com/gymman-login`.
 
----
+✔ Fully implemented login, signup, session management, and secure password hashing  
+✔ Complete multi-role architecture (Owner, Staff, Trainer, Member)  
+✔ Owner, Staff, Trainer, and Member dashboards implemented  
+✔ Functional membership management (CRUD) with phone numbers and emergency contacts  
+✔ Member check-in system with recent-history tracking  
+✔ Staff and trainer registration pipelines implemented  
+✔ Trainer–client assignment system implemented  
+✔ Exercise logging system (strength + cardio) including Runs and Bike Rides  
+✔ Exercise modification and deletion implemented  
+✔ Payment creation and revenue aggregation implemented  
+✔ Aggregation queries for RPE, max weight, distances, and revenue  
+✔ All backend SQL query models implemented in models.py  
+✔ Database schema fully deployed in MariaDB  
+✔ Load-more pagination for check-ins  
+✔ Flash messaging, form validation, and input handling  
+✔ Deployed demo at: https://isaacstephens.com/gymman-login
 
+`WIP` UI pages for some views (payments, reports, admin pages)  
+`WIP` Exercise browsing UI for member / trainer  
+`WIP` Error logging and visibility tools  
+`WIP` Advanced trainer reporting pages  
+`WIP` Payment completion workflow (mark as completed, staff approval, etc.)
 
 ## Core Features (Partially Implemented)
 
-### **Member Management**
-- Add, update, delete members  
-- Add/remove phone numbers and emergency contacts  
-- Track membership start dates, demographics, and contact info  
-- View exercise history and payment history
+See the full functional requirements in
+[Database Functional Requirements](gymman-demo/db_functional_req.md) 
 
-### **Staff & Trainer Management**
-- Register staff with SSN, name, role, employment date  
-- Sub-type specific storage (trainer, contractor, hourly, salary, maintenance)  
-- Register trainer certifications  
-- Assign/unassign members to trainers  
+## User Roles Overview
 
-### **Exercise Logging**
-- Add strength or cardio exercise  
-- Strength: weight, unit, sets, reps, RPE, notes  
-- Cardio: avg heart rate, time, subtype  
-  - Run → distance, laps  
-  - Bike → distance, wattage  
-- Modify or delete exercises  
-- Full exercise history per member
-
-### **Payments**
-- Add new payments  
-- View payment summary for each member  
-- Compute total gym revenue  
-
-### **Queries & Reports**
-- Trainer client lists  
-- Total payments per member  
-- Maximum weight lifted  
-- Average distance per member (runs)  
-- Average RPE (per member or global)  
-- Drill-down exercise history  
-- Date-range filters  
-- Dashboard metrics and summaries  
-
----
+| Role    | Capabilities |
+|---------|--------------|
+| **Owner**   | Full system access: manage members, staff, trainers, payments, exercises, reports |
+| **Staff**   | Manage memberships, payments, check-ins |
+| **Trainer** | View assigned clients, log workouts, review performance |
+| **Member**  | View profile, workouts, payments, and membership status |
 
 ## Database Architecture
 
@@ -83,7 +77,32 @@ A full ER and logical schema is included in `documentation/`:
 
 ![GymMan ER Diagram](documentation/GymMan_Relational_MySQLworkbench.png)
 
----
+## Project Structure
+```
+Gym-Manager/
+├── gymman_install_DEBIAN.sh
+├── LICENSE
+├── README.md
+├── documentation/
+│   └── BUILD.md
+├── gymman-demo/
+│   ├── db.env
+│   ├── db_functional_req.md
+│   ├── main.py
+│   ├── venv
+│   └── website/
+│       ├── auth.py
+│       ├── db.env
+│       ├── __init__.py
+│       ├── models.py
+│       ├── passwords.env
+│       ├── __pycache__
+│       ├── static
+│       └── templates
+└── scripts
+    ├── create_gymman_tables.sql
+    └── gymman_demo_source.sql
+```
 
 ## Tech Stack
 
@@ -95,3 +114,11 @@ A full ER and logical schema is included in `documentation/`:
 | **Auth** | Flask sessions, hashed passwords |
 | **Server Deployment** | Gunicorn, Nginx reverse proxy |
 | **Misc** | Cloudflare Tunnels, Linux (Debian) |
+
+## Security Notes
+
+- Passwords are stored using secure hashing (`werkzeug.security`).
+- All database operations use parameterized queries to prevent SQL injection.
+- Sessions use Flask’s built-in secure cookie system.
+- This is a **demo and academic project** and is not intended for production use without further hardening (HTTPS enforcement, rate limiting, CSRF protection, audit logging, etc.).
+
