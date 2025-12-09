@@ -1,132 +1,96 @@
-# Main Build Instructions
-## Setup Steps
-### Prerequisites
+# Installation & Local Setup (Debian/Ubuntu)
 
-Before starting, ensure you are running a **Debian-based Linux distribution** (e.g., Debian, Ubuntu). ***Arch-based distributions*** *are also possible, though they might take more tinkering on your end. I hate myself and run Arch on my desktop so thats why it's sorta compattable.*
+These instructions assume you are running on a Debian-based Linux system and have cloned this repository from GitHub.
 
-
----
-
-### 1. Make the installation script executable
+### 1. Clone the Repository
 ```bash
-chmod +x gymman_install_DEBIAN.sh
+git clone https://github.com/YOUR_USERNAME/Gym-Manager.git
+cd Gym-Manager
 ```
-### 2. Run the installation script
-```bash
-./gymman_install_DEBIAN.sh
-```
--- OR --
-```bash
-./gymman_install_ARCH.sh
-```
+
+### 2. Run the Dependency & Environment Setup Script
 
 This script will:
-- Update the system package lists.
-- Install the required dependencies:
-  - **MariaDB** (on Debian) or **MySQL** (on Ubuntu)
-  - C/C++ database connector libraries (`libmysqlcppconn-dev`, `libmariadb-dev-compat`, or `libmysqlclient-dev` depending on distro)
-  - Vulkan dependencies (`libvulkan1`, `mesa-vulkan-drivers`, `vulkan-toos`)
-  - GLFW (`libglfw3-dev`)
-- Start and enable the database service (`mysql.service` -> actually MariaDB on Debian).
-- Run the respective secure installation processes to harden the database.
-
-### 3. Verify database installation
-The script will automatically check the MySQL version:
-```bash
-mysql --version
-```
-On Debian you will see something like:
-```nginx
-mysql Ver 15.2 Distrib 11.8.3-MariaDB
-```
-On Ubuntu you may see:
-```rust
-mysql Ver 8.0 Distrib for Linux
-```
-
-### 4. Manage the database service
-
-The script ensures service starts on boot. You can also manage it manually:
+- Install MariaDB and required system packages
+- Create a Python virtual environment
+- Install all required python dependencies
+- generate a db.env template for database credentials
 
 ```bash
-sudo systemctl start mysql
-sudo systemctl stop mysql
-sudo systemctl restart mysql
-sudo systemctl status mysql
+chmod +x gymman_install_DEBIAN.sh
+./gymman_install_DEBIAN.sh
 ```
-*(Even with MariaDB, the service is still called `mysql` for compatibility.)*
-### 5. Secure the installation
 
-During the run, the script executes either:
+### 3. Manual MariaDB Setup (REQUIRED)
+
+After the script finishes, you must manually configure MariaDB
+
+#### 3.1 Secure MariaDB
 ```bash
 sudo mysql_secure_installation
 ```
-(for MySQL)
 
-or
+#### 3.2 Enter MariaDB as Root
 ```bash
-sudo mariadb-secure-installation
-```
-(for MariaDB)
-
-This step will prompt you to:
-
-- Set the root password
-- Remove anonymous users
-- Disallow remote root login
-- Remove the test database
-
-### 6. Log into the database
-
-Once installed and secured, you can log in with:
-```bash
-sudo mysql -u root -p
-```
-*(works for both MySQL and MariaDB since the service is `mysql` for both)*
-
-## Troubleshooting
-
-Depending on if you decide to mannualy install or if you're using the install scripts, you may end up with a few issues (my scripts are ameture at best lol). Here are some I've come upon.
-
----
-
-### ❌ **Error:** `Package 'mysql-server' has no installation canidate`
-
-This happens on **Debian**, because `mysql-server` is no longer shipped in the default repos and has been replaced by **MariaDB**, which is fully compatible with MySQL.
-
-✅ Fix: Just run the Debian install script (`gymman_install_DEBIAN.sh`). It will automatically install `mariadb-server` instead of `mysql-server`. Or you can do it yourself. I don't care.
-
----
-
-### ❌ **Error:** `mysql_secure_installation: command not found`
-
-✅ Fix: On Debian, the script is called `mariadb-secure-installation`.
-
----
-
-### Database not working?
-
-Make sure the service is running *(same for all)*:
-```bash
-sudo systemctl status mysql
-```
-Start it manually if needed:
-```bash
-sudo systemctl start mysql
+sudo mysql
 ```
 
-If you changed the root password and forgot it, you can reset it by running MariaDB/MySQL in **skip grant tables** mode *(see the official MySQL/MariaDB docs)*.
+#### 3.3 Create the Database and the User
 
+Inside the MariaDB prompt, run:
+```sql
+CREATE DATABASE gymman;
 
+CREATE USER 'gymman_user'@'localhost'
+IDENTIFIED BY 'strong_password_here';
 
+GRANT ALL PRIVILEGES ON gymman.* TO 'gymman_user'@'localhost';
+FLUSH PRIVILEGES;
 
+EXIT;
+```
+#### 3.4.1 Create the Database Schema
+``` bash
+mysql -u gymman_user -p gymman < scripts/create_gymman_tables.sql
+```
 
+#### 3.4.2 (Optional) Import Demo Database (same database found on isaacstephens.com's demo)
+```bash
+mysql -u gymman_user -p gymman < scripts/gymman_demo_source.sql
+```
 
+### 4. Configure Database Credentials
 
+Edit the environment file created by the script:
+```bash
+nano gymman-demo/db.env
+```
 
+### 5. Start the Application
+```bash
+cd gymman-demo
+source venv/bin/activate
+python3 main.py
+```
 
+The server will start at: `http://127.0.0.1:5000`
 
+### 6. Initial Owner Account Settup (REQUIRED)
 
+On a fresh database, you must create an owner account manually:
+1. Register a user through the `/gymman-sign-up` page.
+2. Log into MariaDB and locate that user in the `users` table.
+3. Change: `role_id = 3` (member) to `role_id = 1` (owner)
+4. Log back in as the owner.
 
+This enables full administrateive access to the system.
 
-
+# Common Issues
+- If you encounter `Access denied for user`, verify:
+  - MariaDB is running
+  - `db.env` credentials are correct
+  - The database user has privileges on `gymman.*`
+- If `python` is not found:
+  - Use `python3` explicitly
+- If packages fail to build:
+  - Ensure `libmariadb-dev-compat` is installed

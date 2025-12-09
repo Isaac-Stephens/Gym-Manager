@@ -1,52 +1,25 @@
-#!/bin/bash
-#
-# GymMan Installer Script for Debian/Ubuntu
-# Installs all dependencies required for wxWidgets + MySQL C++ integration
-#
-# Usage:
-#   chmod +x gymman_install_DEBIAN.sh
-#   ./gymman_install_DEBIAN.sh
-#
+#!/usr/bin/env bash
+set -e
 
-set -e  # Exit immediately on error
+echo "==========================================="
+echo " GymMan Demo: MariaDB + Python Venv Setup  "
+echo "==========================================="
 
-echo "-----------------------------------"
-echo "| Updating system package lists... |"
-echo "-----------------------------------"
+# === CONFIG ===
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_DIR="$SCRIPT_DIR/gymman-demo"
+VENV_DIR="$APP_DIR/venv"
+SQL_SERVICE="mysql"
+SQL_PACKAGES=("mariadb-server" "libmariadb-dev-compat" "python3-venv" "python3-pip")
+
+# === Install Required Packages ===
+echo "--------------------------------------"
+echo "| Installing MariaDB + Python deps... |"
+echo "--------------------------------------"
+
 sudo apt update
 
-# === Base Required Packages ===
-REQUIRED_PACKAGES=(
-    "build-essential"          # Compiler and basic dev tools
-    "g++"                      # C++ compiler
-    "make"                     # Build system
-    "libwxgtk3.2-dev"          # wxWidgets (GTK3 version)
-    "libmysqlcppconn-dev"      # MySQL C++ Connector
-    "libmysqlclient-dev"       # MySQL C client library (dependency)
-    "libgl1-mesa-dev"          # OpenGL headers for wxWidgets (if built with OpenGL support)
-)
-
-# === Detect MySQL or MariaDB availability ===
-MYSQL_CANDIDATE=$(apt-cache policy mysql-server | grep Candidate | awk '{print $2}')
-
-if [ "$MYSQL_CANDIDATE" != "(none)" ]; then
-    echo "MySQL server is available in repositories."
-    SQL_PACKAGES=("mysql-server")
-    SQL_SERVICE="mysql"
-else
-    echo "Falling back to MariaDB server."
-    SQL_PACKAGES=("mariadb-server" "libmariadb-dev-compat")
-    SQL_SERVICE="mysql"  # MariaDB service still uses 'mysql'
-fi
-
-# Merge arrays
-REQUIRED_PACKAGES+=("${SQL_PACKAGES[@]}")
-
-# === Install Missing Packages ===
-echo "--------------------------------------"
-echo "| Checking and installing packages... |"
-echo "--------------------------------------"
-for package in "${REQUIRED_PACKAGES[@]}"; do
+for package in "${SQL_PACKAGES[@]}"; do
     if ! dpkg -s "$package" &> /dev/null; then
         echo "Installing $package..."
         sudo apt install -y "$package"
@@ -55,40 +28,115 @@ for package in "${REQUIRED_PACKAGES[@]}"; do
     fi
 done
 
-echo "--------------------------------------------"
-echo "| All required dependencies are installed! |"
-echo "--------------------------------------------"
-
-# === Start and Enable Database Service ===
+# === Start + Enable MariaDB ===
 echo "-------------------------------------------"
-echo "| Verifying and starting $SQL_SERVICE service... |"
+echo "| Enabling and starting MariaDB service   |"
 echo "-------------------------------------------"
 
-mysql --version || true
 sudo systemctl enable "$SQL_SERVICE"
 sudo systemctl start "$SQL_SERVICE"
-sudo systemctl status "$SQL_SERVICE" --no-pager || true
+mysql --version || true
 
-# === Secure the Database Installation ===
+# === Print Manual MariaDB Setup Instructions ===
+echo
+echo "==============================="
+echo " MANUAL MARIADB SETUP REQUIRED"
+echo "==============================="
+echo
+echo "Run the following commands:"
+echo
+echo "1) Secure MariaDB:"
+echo "   sudo mysql_secure_installation"
+echo
+echo "2) Log into MariaDB as root:"
+echo "   sudo mysql"
+echo
+echo "3) Inside MariaDB, run:"
+echo
+cat <<'EOF'
+CREATE DATABASE gymman;
+
+CREATE USER 'gymman_user'@'localhost'
+IDENTIFIED BY 'strong_password_here';
+
+GRANT ALL PRIVILEGES ON gymman.* TO 'gymman_user'@'localhost';
+FLUSH PRIVILEGES;
+
+EXIT;
+EOF
+echo
+echo "4) Import the demo database (optional):"
+echo "   mysql -u gymman_user -p gymman < scripts/gymman_demo_source.sql"
+echo
+echo "=========================================================="
+echo
+
+# === Create Python Virtual Environment ===
 echo "---------------------------------------------"
-echo "| Running secure installation configuration |"
+echo "| Creating Python virtual environment       |"
 echo "---------------------------------------------"
-if command -v mysql_secure_installation >/dev/null 2>&1; then
-    sudo mysql_secure_installation
-elif command -v mariadb-secure-installation >/dev/null 2>&1; then
-    sudo mariadb-secure-installation
+
+cd "$APP_DIR"
+
+if [ ! -d "$VENV_DIR" ]; then
+    python3 -m venv venv
+    echo "Venv created."
 else
-    echo "No secure installation script found. You may need to secure the DB manually."
+    echo "Venv already exists."
 fi
 
-echo "--------------------------------------------------"
-echo "| Setup complete! You can now build Gym Manager. |"
-echo "--------------------------------------------------"
+# === Activate Venv ===
+source venv/bin/activate
 
-echo ""
-echo "Next steps:"
-echo "  1. Build the project:"
-echo "       make clean && make"
-echo "  2. Run the program:"
-echo "       ./gymman"
-echo ""
+# === Install Python Dependencies ===
+echo "---------------------------------------------"
+echo "| Installing Python packages               |"
+echo "---------------------------------------------"
+
+pip install --upgrade pip
+pip install flask mysql-connector-python python-dotenv gunicorn
+
+# === Create db.env Template ===
+ENV_FILE="$APP_DIR/website/db.env"
+
+if [ ! -f "$ENV_FILE" ]; then
+    echo "---------------------------------------------"
+    echo "| Creating db.env template                  |"
+    echo "---------------------------------------------"
+
+    cat <<EOF > "$ENV_FILE"
+DB_HOST=localhost
+DB_USER=gymman_user
+DB_PASS=CHANGE_ME
+DB_NAME=gymman
+EOF
+
+    chmod 600 "$ENV_FILE"
+
+    echo "Created db.env (YOU MUST EDIT DB_PASS)."
+else
+    echo "db.env already exists."
+fi
+
+# === Final Instructions ===
+echo
+echo "===================================="
+echo "SYSTEM PACKAGE + VENV SETUP COMPLETE"
+echo "===================================="
+echo
+echo "NEXT STEPS (REQUIRED):"
+echo
+echo "1) Finish MariaDB setup using the instructions above."
+echo
+echo "2) Edit your database credentials:"
+echo "   nano $APP_DIR/website/db.env"
+echo
+echo "3) Start the application:"
+echo "   cd $APP_DIR"
+echo "   source venv/bin/activate"
+echo "   python3 main.py"
+echo
+echo "4) If starting from scratch, you must create an owner account at the very least within users table." 
+echo "   This can be done by manualy editing the users table after creating a user from the /gymman-sign-up" 
+echo "   page (flip from role_id=3 (member) to role_id=1 (owner))."
+

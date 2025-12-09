@@ -1,0 +1,143 @@
+{% extends "base_gymman.html" %}
+{% block title %}<title>Member Update | gymman(demo);</title>{% endblock %}
+{% block sidebar %}
+
+{% endblock %}
+{% block content %}
+<header>
+  <h1>Member {{ member_id }}: {{ info['first_name'] + ' ' + info['last_name'] }}</h1>
+</header>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="card-grid">
+    <!-- Update Email / Phone Number(s) -->
+    <div class="card">
+      <h3>Update Contact Info</h3>
+      <div class="form-section">
+        <form method="post" action="">
+        <label><strong>Add New Phone Number</strong></label>
+        <div class="form-group">
+          <input type="text" name="new_phone_num" placeholder="000-000-0000" required>
+          <input type="text" name="new_phone_num_type" placeholder="'Mobile', 'Work', 'Home'..." required>
+        </div>
+        <button type="submit" name="new_phone" value="1">Add</button>
+        </form>
+      </div>
+      <div class="form-section">
+        <label><strong>Update Email</strong></label>
+        <label>(Current: {{ info['email'] }})</label>
+        <form method="post" action="">
+          <div class="form-group">
+            <input type="text" name="new_email" placeholder="Enter New Email: example@email.com" required>
+          </div>
+          <button type="submit" name="new_email" value="1">Update</button>
+        </form>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Add Emergency Contact</h3>
+      <div class="form-section">
+        <form method="post" action="">
+          <label style="text-align: left;">Name:</label>
+          <div class="form-group">
+            <input type="text" name="new_contact_fname" placeholder="First Name..." required>
+            <input type="text" name="new_contact_lname" placeholder="Last Name" required>
+          </div>
+          <label style="text-align: left;">Relationship:</label>
+          <div class="form-group">
+            <input type="text" name="new_contact_relationship" placeholder="ie. 'Mother', 'Father', etc..." required>
+          </div>
+          <label style="text-align: left;">Contact Info:</label>
+          <div class="form-group">
+            <label style="size: small; text-align: left;">Phone</label>
+            <input type="text" name="new_contact_phone" placeholder="000-000-0000" required>
+            <label style="size: small; text-align: left;">Email</label>
+            <input type="text" name="new_contact_email" placeholder="example@email.com">
+          </div>
+          <button type="submit" name="new_contact" value="1">Add</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Phone Numbers</h3>
+      <form method="post" action="">
+      <table>
+        <thead>
+          <th>Phone Number ID</th>
+          <th>Phone Number</th>
+          <th>Type</th>
+          <th></th>
+          </thead>
+        <tbody>
+          {% if phone_numbers %}
+            {% for record in phone_numbers %}
+              <tr>
+                <td>{{ record.phone_number_id }}</td>
+                <td>{{ record.phone_number }}</td>
+                <td>{{ record.phone_number_type }}</td>
+                <td>
+                  
+                  <button style="background: red;" type="submit" name="delete_phone" value="{{ record.phone_number_id }}"
+                          onclick="return confirm('Are you sure you want to delete this number?');">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center;">No numbers found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Emergency Contacts</h3>
+      <table>
+        <thead>
+          <th>Contact ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Relationship</th>
+          <th></th>
+        </thead>
+        <tbody>
+          {% if emergency_contacts %}
+            {% for record in emergency_contacts %}
+              <tr>
+                <td>{{ record.emergency_contact_id }}</td>
+                <td>{{ record.name }}</td>
+                <td>{{ record.email }}</td>
+                <td>{{ record.phone_number }}</td>
+                <td>{{ record.relationship }}</td>
+                <td>
+                  <button style="background: red;" type="submit" name="delete_contact" value="{{ record.emergency_contact_id }}"
+                          onclick="return confirm('Are you sure you want to delete this contact?');">
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="6" style="text-align: center;">No contacts found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+</div>
+{% endblock %}

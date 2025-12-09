@@ -12,5 +12,6 @@ gymman
 *.mwb
 
 scripts/update_db.sh
-
+__pycache__/
+*.env
 

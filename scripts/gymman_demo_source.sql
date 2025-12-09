@@ -324,19 +324,19 @@ INSERT INTO users (username, password_hash, role_id, first_name, last_name, emai
 VALUES
     ('demo_owner',
         'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41',
-        1, 'Demo', 'Owner', NULL),
+        1, 'Demo', 'Owner', 'demo_owner@gymman.com'),
 
     ('demo_staff',
         'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41',
-        2, 'Demo', 'Staff', NULL),
+        2, 'Demo', 'Staff', 'demo_staff@gymman.com'),
 
     ('demo_member',
         'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41',
-        3, 'Demo', 'Member', NULL),
+        3, 'Demo', 'Member', 'demo_member@gymman.com'),
 
     ('demo_trainer',
         'scrypt:32768:8:1$BiFZ3W1BsOg2Z2o5$8f4e0e36b2c6b25f74f6ac47604b1fe5f11e44d21ac6d5453288d0924474580f9c100f9386bb44e81c2913b5a88d5c1f0e49c8fd8c30ed64ce1680a322cdaf41',
-        4, 'Demo', 'Trainer', NULL);
+        4, 'Demo', 'Trainer', 'demo_trainer@gymman.com');
 
 
 INSERT INTO Members (first_name, last_name, birth_date, membership_start_date, email, sex)
