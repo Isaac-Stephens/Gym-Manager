@@ -75,7 +75,7 @@ The database enforces:
 
 A full ER and logical schema is included in `documentation/`:
 
-![GymMan ER Diagram](documentation/GymMan_Relational_MySQLworkbench.png)
+![GymMan ER Diagram](documentation/Gymman-EER-FINAL.png)
 
 ## Project Structure
 ```
