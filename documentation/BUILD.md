@@ -4,7 +4,7 @@ These instructions assume you are running on a Debian-based Linux system and hav
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YOUR_USERNAME/Gym-Manager.git
+git clone https://github.com/Isaac-Stephens/Gym-Manager.git
 cd Gym-Manager
 ```
 
