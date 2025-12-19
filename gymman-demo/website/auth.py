@@ -339,23 +339,7 @@ def owner_payments():
 
     db = get_db()
     cursor = db.cursor(dictionary=True)
-
-    # Always load pending payments for the page
-    cursor.execute("""
-        SELECT 
-            p.payment_id,
-            p.member_id,
-            CONCAT(m.first_name, ' ', m.last_name) AS member_name,
-            p.amount,
-            p.payment_date,
-            p.status,
-            p.type
-        FROM Payments AS p
-        JOIN Members AS m ON p.member_id = m.member_id
-        WHERE LOWER(p.status) = 'pending'
-        ORDER BY p.payment_date DESC
-    """)
-    pending_payments = cursor.fetchall()
+    pending_payments = db_loadPendingPayments()
 
     if request.method == 'POST':
         # Search payments by member and/or date range and status
@@ -435,11 +419,72 @@ def owner_payments():
         aggregate_total=aggregate_total
     )
 
-@auth.route("/owner/staff")
+@auth.route("/owner/staff", methods=['GET', 'POST'])
 def owner_staff():
     if not is_logged_in("Owner"):
         return redirect(url_for("auth.login"))
-    return render_template("/gymman_templates/owner_view/staff.html", username=session["username"], name=session["name"])
+
+    # Handle staff registration
+    if request.method == 'POST' and 'register_staff' in request.form:
+        ssn = request.form.get("ssn")
+        fname = request.form.get("first_name")
+        lname = request.form.get("last_name")
+        emp_date = request.form.get("employment_date")  # yyyy-mm-dd
+        birth_date = request.form.get("birth_date")     # yyyy-mm-dd
+        address = request.form.get("address")
+
+        staff_type = request.form.get("staff_type")  # hourly, salary, maintenance, manager, contractor
+
+        hourly_rate = request.form.get("hourly_rate") or None
+        annual_salary = request.form.get("annual_salary") or None
+        contract_type = request.form.get("contract_type") or None
+        contract_details = request.form.get("contract_details") or None
+        shift_managed = request.form.get("shift_managed") or None
+
+        # Basic validation
+        if not all([ssn, fname, lname, emp_date, birth_date, address, staff_type]):
+            flash("Missing required staff fields.")
+            return redirect(request.referrer)
+
+        try:
+            if hourly_rate is not None:
+                hourly_rate = float(hourly_rate)
+            if annual_salary is not None:
+                annual_salary = float(annual_salary)
+        except ValueError:
+            flash("Invalid pay values.")
+            return redirect(request.referrer)
+
+        staff_id = db_registerStaff(
+            ssn, fname, lname, emp_date, birth_date, address,
+            staff_type,
+            hourly_rate=hourly_rate,
+            annual_salary=annual_salary,
+            contract_type=contract_type,
+            contract_details=contract_details,
+            shift_managed=shift_managed
+        )
+        flash(f"Staff member registered with ID {staff_id}.")
+        return redirect(request.referrer)
+
+    # Show staff listing
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT staff_id, first_name, last_name, employment_date, birth_date, staff_address
+        FROM Staff
+        ORDER BY last_name, first_name
+    """)
+    staff_list = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    return render_template(
+        "/gymman_templates/owner_view/staff.html",
+        username=session["username"],
+        name=session["name"],
+        staff_list=staff_list
+    )
 
 @auth.route("/owner/trainers")
 def owner_trainers():

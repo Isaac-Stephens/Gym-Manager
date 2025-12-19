@@ -580,6 +580,29 @@ def db_aggregateMaxWeight(member_id):
     db.close()
     return row["max_weight"] or 0
 
+# load pending payments
+def db_loadPendingPayments():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT 
+            p.payment_id,
+            p.member_id,
+            CONCAT(m.first_name, ' ', m.last_name) AS member_name,
+            p.amount,
+            p.payment_date,
+            p.status,
+            p.type
+        FROM Payments AS p
+        JOIN Members AS m ON p.member_id = m.member_id
+        WHERE LOWER(p.status) = 'pending'
+        ORDER BY p.payment_date DESC
+    """)
+    pending_payments = cursor.fetchall()
+    cursor.close()
+    db.close()
+    return pending_payments
+
 # aggregate average run distance (owner/trainer/member)
 def db_aggregateAvgRunDist(member_id):
     db = get_db()
