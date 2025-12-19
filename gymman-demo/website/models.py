@@ -533,7 +533,7 @@ def db_aggregatePayments(member=False, member_id=None):
         cursor.execute("""
             SELECT SUM(amount) AS total_revenue
             FROM Payments
-            WHERE LOWER(status) = 'completed'
+            WHERE LOWER(status) = 'Complete' OR LOWER(status) = 'Paid'
         """)
     else:
         cursor.execute("""

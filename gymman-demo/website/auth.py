@@ -216,6 +216,7 @@ def owner_dashboard():
     total_members = db_getNumTotalMembers()
     pending_payments = db_getNumPendingPayments()
     total_active_trainers = db_getNumActiveTrainers()
+    total_revenue = db_aggregatePayments()
 
     return render_template(
         "/gymman_templates/dashboard_owner.html", 
@@ -223,7 +224,8 @@ def owner_dashboard():
         name=session["name"],
         total_members=total_members,
         pending_payments=pending_payments,
-        total_active_trainers=total_active_trainers
+        total_active_trainers=total_active_trainers,
+        total_revenue=total_revenue
     )
 
 @auth.route("/owner/memberships", methods=['GET','POST'])
@@ -288,6 +290,25 @@ def owner_memberships():
             db_deleteMember(member_id)
             flash("Member deleted successfully.")
             return redirect(request.referrer)
+        elif 'add_payment' in request.form:
+            member_id = request.form.get("add_payment")  # button value = member_id
+            amount_raw = request.form.get("payment_amount")
+            status = request.form.get("payment_status", "pending")
+            payment_type = request.form.get("payment_type", "membership")
+
+            if not member_id or not amount_raw:
+                flash("Member and amount are required to add a payment.")
+                return redirect(request.referrer)
+
+            try:
+                amount = float(amount_raw)
+            except ValueError:
+                flash("Invalid amount for payment.")
+                return redirect(request.referrer)
+
+            db_addPayment(member_id, amount, status=status, payment_type=payment_type)
+            flash("Payment added for member.")
+            return redirect(request.referrer)
         else:
             return redirect(request.referrer)
 
@@ -307,15 +328,111 @@ def owner_memberships():
         member_list=member_list
     )
 
-@auth.route("/owner/payments")
+@auth.route("/owner/payments", methods=['GET', 'POST'])
 def owner_payments():
     if not is_logged_in("Owner"):
         return redirect(url_for("auth.login"))
     
+    pending_payments = []
+    search_results = None
+    aggregate_total = None
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    # Always load pending payments for the page
+    cursor.execute("""
+        SELECT 
+            p.payment_id,
+            p.member_id,
+            CONCAT(m.first_name, ' ', m.last_name) AS member_name,
+            p.amount,
+            p.payment_date,
+            p.status,
+            p.type
+        FROM Payments AS p
+        JOIN Members AS m ON p.member_id = m.member_id
+        WHERE LOWER(p.status) = 'pending'
+        ORDER BY p.payment_date DESC
+    """)
+    pending_payments = cursor.fetchall()
+
+    if request.method == 'POST':
+        # Search payments by member and/or date range and status
+        if 'search_payment' in request.form:
+            member_query = request.form.get("search_member", "").strip()
+            date_from = request.form.get("date_from")  # yyyy-mm-dd
+            date_to = request.form.get("date_to")      # yyyy-mm-dd
+            status_filter = request.form.get("status_filter", "").strip().lower()
+
+            where = []
+            params = []
+
+            if member_query:
+                where.append("(p.member_id = %s OR CONCAT(m.first_name, ' ', m.last_name) LIKE %s)")
+                params.append(member_query)
+                params.append(f"%{member_query}%")
+
+            if date_from:
+                where.append("p.payment_date >= %s")
+                params.append(date_from)
+            if date_to:
+                where.append("p.payment_date <= %s")
+                params.append(date_to)
+
+            if status_filter in ("pending", "complete", "failed", "paid"):
+                where.append("LOWER(p.status) = %s")
+                params.append(status_filter)
+
+            sql = """
+                SELECT 
+                    p.payment_id,
+                    p.member_id,
+                    CONCAT(m.first_name, ' ', m.last_name) AS member_name,
+                    p.amount,
+                    p.payment_date,
+                    p.status,
+                    p.type
+                FROM Payments AS p
+                JOIN Members AS m ON p.member_id = m.member_id
+            """
+            if where:
+                sql += " WHERE " + " AND ".join(where)
+            sql += " ORDER BY p.payment_date DESC"
+
+            cursor.execute(sql, tuple(params))
+            search_results = cursor.fetchall()
+
+        # Aggregate complete payments for last N days
+        elif 'aggregate_over_n' in request.form:
+            n_days_raw = request.form.get("n_days")
+            try:
+                n_days = int(n_days_raw)
+            except (TypeError, ValueError):
+                flash("Invalid number of days.")
+                cursor.close()
+                db.close()
+                return redirect(request.referrer)
+
+            cursor.execute("""
+                SELECT SUM(amount) AS total
+                FROM Payments
+                WHERE LOWER(status) = 'complete'
+                  AND payment_date >= (CURDATE() - INTERVAL %s DAY)
+            """, (n_days,))
+            row = cursor.fetchone()
+            aggregate_total = row["total"] or 0.0
+
+    cursor.close()
+    db.close()
+
     return render_template(
         "/gymman_templates/owner_view/payments.html", 
         username=session["username"], 
-        name=session["name"]
+        name=session["name"],
+        pending_payments=pending_payments,
+        search_results=search_results,
+        aggregate_total=aggregate_total
     )
 
 @auth.route("/owner/staff")
