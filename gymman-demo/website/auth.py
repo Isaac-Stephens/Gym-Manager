@@ -486,11 +486,94 @@ def owner_staff():
         staff_list=staff_list
     )
 
-@auth.route("/owner/trainers")
+@auth.route("/owner/trainers", methods=['GET', 'POST'])
 def owner_trainers():
     if not is_logged_in("Owner"):
         return redirect(url_for("auth.login"))
-    return render_template("/gymman_templates/owner_view/trainers.html", username=session["username"], name=session["name"])
+
+    # Load all trainer-client relationships
+    trainer_clients = db_showTrainerClientRel()
+    search_term = None
+
+    if request.method == 'POST':
+        # Register a trainer from existing staff
+        if 'register_trainer' in request.form:
+            staff_id = request.form.get("staff_id")
+            speciality = request.form.get("speciality")
+            active_raw = request.form.get("active", "1")
+
+            if not staff_id or not speciality:
+                flash("Staff ID and speciality are required to register a trainer.")
+                return redirect(request.referrer)
+
+            try:
+                active = int(active_raw)
+            except ValueError:
+                active = 1
+
+            db_registerTrainer(staff_id, speciality, active=active)
+            flash("Trainer registered.")
+            return redirect(request.referrer)
+
+        # Assign trainer to a member
+        elif 'assign_trainer' in request.form:
+            trainer_id = request.form.get("trainer_id")
+            member_id = request.form.get("member_id")
+            notes = request.form.get("notes")
+
+            if not trainer_id or not member_id:
+                flash("Trainer and member IDs are required to assign a trainer.")
+                return redirect(request.referrer)
+
+            db_assignTrainer(trainer_id, member_id, notes=notes)
+            flash("Trainer assigned to member.")
+            return redirect(request.referrer)
+
+        # Filter trainer-client relationships
+        elif 'search_relationships' in request.form:
+            search_term = request.form.get("search_term", "").strip().lower()
+            if search_term:
+                filtered = []
+                for rel in trainer_clients:
+                    trainer_name = (rel.get("trainer") or "").lower()
+                    client_name = (rel.get("client") or "").lower()
+                    if search_term in trainer_name or search_term in client_name:
+                        filtered.append(rel)
+                trainer_clients = filtered
+
+    # Also provide list of trainers and members for dropdowns
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT staff_id, CONCAT(first_name, ' ', last_name) AS staff_name
+        FROM Staff
+        ORDER BY staff_name
+    """)
+    all_staff = cursor.fetchall()
+
+    all_trainers = db_getAllTrainers()
+
+    cursor.execute("""
+        SELECT member_id, CONCAT(first_name, ' ', last_name) AS member_name
+        FROM Members
+        ORDER BY member_name
+    """)
+    all_members = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+
+    return render_template(
+        "/gymman_templates/owner_view/trainers.html", 
+        username=session["username"], 
+        name=session["name"],
+        trainer_clients=trainer_clients,
+        all_trainers=all_trainers,
+        all_members=all_members,
+        all_staff=all_staff,
+        search_term=search_term
+    )
 
 @auth.route("/owner/exercise_logs")
 def owner_exercise_logs():

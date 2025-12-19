@@ -431,6 +431,23 @@ def db_registerTrainer(staff_id, speciality, active=1):
     cursor.close()
     db.close()
 
+def db_getAllTrainers():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT t.staff_id, t.speciality, t.active,
+               CONCAT(s.first_name, ' ', s.last_name) AS trainer_name
+        FROM Trainers t
+        JOIN Staff s ON t.staff_id = s.staff_id
+        ORDER BY trainer_name
+    """)
+    all_trainers = cursor.fetchall()
+
+    cursor.close()
+    db.close()
+    return all_trainers
+
 # assign trainer to a member (owner/staff/trainer)
 def db_assignTrainer(trainer_id, member_id, notes=None):
     db = get_db()
