@@ -575,11 +575,103 @@ def owner_trainers():
         search_term=search_term
     )
 
-@auth.route("/owner/exercise_logs")
-def owner_exercise_logs():
+@auth.route("/owner/exercise_logs", methods=['GET', 'POST'])
+def owner_exercise_logs(): # TODO: actually add the strenght / cardio tables
     if not is_logged_in("Owner"):
         return redirect(url_for("auth.login"))
-    return render_template("/gymman_templates/owner_view/exercise_logs.html", username=session["username"], name=session["name"])
+
+    selected_member_id = None
+    exercises = []
+
+    if request.method == 'POST':
+        # search / load exercises for a member
+        if 'search_member' in request.form:
+            selected_member_id = request.form.get("member_id")
+            if selected_member_id:
+                exercises = db_getExercise(selected_member_id)
+            else:
+                flash("Please choose a member to view exercises.")
+
+        # log a new exercise
+        elif 'log_exercise' in request.form:
+            member_id = request.form.get("log_member_id")
+            name = request.form.get("exercise_name")
+            rpe_raw = request.form.get("rpe")
+            date = request.form.get("exercise_date")  # yyyy-mm-dd
+
+            if not all([member_id, name, rpe_raw, date]):
+                flash("Member, exercise name, RPE, and date are required to log an exercise.")
+                return redirect(request.referrer)
+
+            try:
+                rpe = int(rpe_raw)
+            except ValueError:
+                flash("RPE must be an integer.")
+                return redirect(request.referrer)
+
+            # not using strength/cardio extra tables for now
+            db_logExercise(member_id, name, rpe, date)
+            flash("Exercise logged.")
+            selected_member_id = member_id
+            exercises = db_getExercise(member_id)
+
+        elif 'modify_exercise' in request.form:
+            exercise_id = request.form.get("exercise_id")
+            new_rpe = request.form.get("new_rpe")
+            new_date = request.form.get("new_date")
+            selected_member_id = request.form.get("member_id_for_refresh")
+
+            if not exercise_id:
+                flash("Exercise ID required to modify.")
+                return redirect(request.referrer)
+
+            rpe_val = None
+            if new_rpe:
+                try:
+                    rpe_val = int(new_rpe)
+                except ValueError:
+                    flash("Invalid RPE value.")
+                    return redirect(request.referrer)
+
+            db_modifyExercise(exercise_id, rpe=rpe_val, date=new_date)
+            flash("Exercise updated.")
+
+            if selected_member_id:
+                exercises = db_getExercise(selected_member_id)
+
+        elif 'delete_exercise' in request.form:
+            exercise_id = request.form.get("delete_exercise")
+            selected_member_id = request.form.get("member_id_for_refresh")
+
+            if not exercise_id:
+                flash("Exercise ID required to delete.")
+                return redirect(request.referrer)
+
+            db_deleteExercise(exercise_id)
+            flash("Exercise deleted.")
+
+            if selected_member_id:
+                exercises = db_getExercise(selected_member_id)
+
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT member_id, CONCAT(first_name, ' ', last_name) AS member_name
+        FROM Members
+        ORDER BY member_name
+    """)
+    all_members = cursor.fetchall()
+    cursor.close()
+    db.close()
+
+    return render_template(
+        "/gymman_templates/owner_view/exercise_logs.html",
+        username=session["username"],
+        name=session["name"],
+        all_members=all_members,
+        selected_member_id=selected_member_id,
+        exercises=exercises
+    )
 
 @auth.route("/owner/error_logs")
 def owner_errors():
